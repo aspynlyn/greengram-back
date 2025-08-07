@@ -11,6 +11,9 @@ import lombok.RequiredArgsConstructor;
 public enum EnumUserRole implements EnumMapperType {
   USER_1("01", "유저1")
   , USER_2("02", "유저2")
+  , USER_3("03", "유저3")
+  , USER_4("04", "매니저")
+  , USER_5("05", "관리자")
   ;
 
   private final String code;
