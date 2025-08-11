@@ -31,6 +31,7 @@ public class UserController {
 
   }
 
+  // response는 쿠키에 AT, RT를 담기위해 필요함 쿠키는 브라우저(사용자)에 저장
   @PostMapping("/sign-in")
   public ResultResponse<?> signIn(@Valid @RequestBody UserSignInReq req, HttpServletResponse response){
     log.info("req: {}", req);

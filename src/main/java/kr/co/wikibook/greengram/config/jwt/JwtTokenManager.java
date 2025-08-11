@@ -17,9 +17,9 @@ import org.springframework.stereotype.Component;
 @Component
 @RequiredArgsConstructor
 public class JwtTokenManager {
-    private final ConstJwt constJwt;
-    private final CookieUtils cookieUtils;
-    private final JwtTokenProvider jwtTokenProvider;
+    private final ConstJwt constJwt; // 설정 내용(문자열)
+    private final CookieUtils cookieUtils; // 쿠키 관련
+    private final JwtTokenProvider jwtTokenProvider; // JWT 관련
 
     public void issue(HttpServletResponse response, JwtUser jwtUser) {
         setAccessTokenInCookie(response, jwtUser);
@@ -94,7 +94,7 @@ public class JwtTokenManager {
         String accessToken = getAccessTokenFromCookie(request);
         if(accessToken == null){ return null; }
         JwtUser jwtUser = getJwtUserFromToken(accessToken);
-        if(jwtUser == null) { return null; }
+//        if(jwtUser == null) { return null; } 토근이 오염됐을 시 예외가 발생하기 때문에 null처리 굳이 필요없
         UserPrincipal userPrincipal = new UserPrincipal(jwtUser.getSignedUserId(), jwtUser.getRoles());
         return new UsernamePasswordAuthenticationToken(userPrincipal, null, userPrincipal.getAuthorities());
     }

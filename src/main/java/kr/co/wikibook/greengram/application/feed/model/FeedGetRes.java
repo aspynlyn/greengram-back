@@ -16,5 +16,6 @@ public class FeedGetRes {
   private String writerUid;
   private String writerNickName;
   private String writerPic;
+  private int isLike; // 0: 싫어요피드 1: 좋아요피드
   private List<String> pics;
 }

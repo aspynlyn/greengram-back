@@ -1,9 +1,7 @@
 package kr.co.wikibook.greengram.application.feed;
 
 import jakarta.validation.Valid;
-import kr.co.wikibook.greengram.application.feed.model.FeedGetDto;
-import kr.co.wikibook.greengram.application.feed.model.FeedGetReq;
-import kr.co.wikibook.greengram.application.feed.model.FeedPostReq;
+import kr.co.wikibook.greengram.application.feed.model.*;
 import kr.co.wikibook.greengram.config.model.ResultResponse;
 import kr.co.wikibook.greengram.config.model.UserPrincipal;
 import lombok.Builder;
@@ -27,8 +25,8 @@ public class FeedController {
     log.info("signedUserId: {}", userPrincipal.getSignedUserId());
     log.info("req: {}", req);
     log.info("pics: {}", pics.size());
-    feedService.postFeed(userPrincipal.getSignedUserId(), req, pics);
-    return new ResultResponse<>("피드 입력 완료", null);
+    FeedPostRes result = feedService.postFeed(userPrincipal.getSignedUserId(), req, pics);
+    return new ResultResponse<>("피드 입력 완료", result);
 
   }
 
@@ -44,7 +42,8 @@ public class FeedController {
             .startIdx((req.getPage() - 1) * req.getRowPerPage())
             .size(req.getRowPerPage())
             .build();
-    return null;
+    List<FeedGetRes> result = feedService.getFeedList(feedGetDto);
+    return new ResultResponse<>(String.format("rows: %d", result.size()), result);
   }
   // modelattribute는 setter나 생성자가 있어야 데이터 들어감
 }

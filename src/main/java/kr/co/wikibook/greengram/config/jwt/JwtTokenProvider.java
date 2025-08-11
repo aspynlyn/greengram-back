@@ -38,17 +38,18 @@ public class JwtTokenProvider {
                 .and()
 
                 //payload
-                .issuer(constJwt.getIssuer())
-                .issuedAt(now) //발행일시(토큰 생성일시)
-                .expiration(new Date(now.getTime() + tokenValidityMilliSeconds)) //만료일시(토큰 만료일시)
-                .claim(constJwt.getClaimKey(), makeClaimByUserToJson(jwtUser))
+                .issuer(constJwt.getIssuer()) // (특히 옵션)
+                .issuedAt(now) //발행일시(토큰 생성일시) (옵션)
+                .expiration(new Date(now.getTime() + tokenValidityMilliSeconds)) //만료일시(토큰 만료일시) 무조건 꼭 담기
+                .claim(constJwt.getClaimKey(), makeClaimByUserToJson(jwtUser)) // 커스텀하게 만들어서 담은 클래임
 
                 //signature
                 .signWith(secretKey)
                 .compact();
     }
 
-    public String makeClaimByUserToJson(JwtUser jwtUser) {
+    // 외부에서 쓰지않는다면 굳이 public으로 쓰지 않고 최대한 범위를 줄이기(전수조사 안해도됨)
+    private String makeClaimByUserToJson(JwtUser jwtUser) {
         try {
             return objectMapper.writeValueAsString(jwtUser);
         } catch (JsonProcessingException e){
