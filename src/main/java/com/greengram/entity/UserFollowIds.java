@@ -1,15 +1,15 @@
 package com.greengram.entity;
 
 import jakarta.persistence.Embeddable;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import java.io.Serializable;
 
 @Getter
-@Setter
 @Embeddable
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 @EqualsAndHashCode
 public class UserFollowIds implements Serializable {
   private Long fromUserId;

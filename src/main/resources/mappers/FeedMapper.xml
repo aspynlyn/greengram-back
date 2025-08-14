@@ -9,6 +9,9 @@
         LEFT JOIN feed_like fl
         ON f.feed_id = fl.feed_id
         AND fl.user_id = #{signedUserId}
+        <if test="profileUserId != null">
+            WHERE f.writer_user_id = #{profileUserId}
+        </if>
         ORDER BY f.feed_id DESC
         LIMIT #{startIdx}, #{size};
     </select>

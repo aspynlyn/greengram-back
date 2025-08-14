@@ -23,6 +23,7 @@ public class UserService {
   private final UserRepository userRepository;
   private final PasswordEncoder passwordEncoder;
   private final ImgUploadManager imgUploadManager;
+  private final UserMapper userMapper;
 
   @Transactional
   public void signUp(UserSignUpReq req, MultipartFile pic) {
@@ -77,6 +78,16 @@ public class UserService {
             .build();
   }
   public UserProfileGetRes getProfileUser(UserProfileGetDto dto) {
-    return null;
+    return userMapper.findProfileByUserId(dto);
+  }
+
+  @Transactional
+  public String patchProfilePic(Long signedUserId, MultipartFile pic) {
+    User user = userRepository.findById(signedUserId).orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "존재하지 않는 사용자입니다"));
+
+    imgUploadManager.removeProfileDirectory(signedUserId);
+    String savedFileName = imgUploadManager.saveProfilePic(signedUserId, pic);
+    user.setPic(savedFileName);
+    return savedFileName;
   }
 }

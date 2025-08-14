@@ -3,11 +3,17 @@
 <mapper namespace="com.greengram.application.user.UserMapper">
     <select id="findProfileByUserId">
         SELECT u.user_id, u.pic, u.created_at, u.uid, u.nick_name
-        , COUNT(DISTINCT f.feed_id) AS feedCount
-        , COUNT(fl.feed_id) AS allFeedLikeCount
+            , COUNT(DISTINCT f.feed_id) AS feedCount
+            , COUNT(DISTINCT f.feed_id, fl.feed_id) AS allFeedLikeCount
+            , COUNT(DISTINCT follower.from_user_id) AS followerCount <!-- 프로필 주인을 팔로우 하는 사람들은 몇 명? -->
+            , COUNT(DISTINCT `following`.to_user_id) AS followingCount  <!-- 프로필 주인이 팔로우 하는 사람들은 몇 명? -->
+            , MAX(IF(follower.from_user_id = #{signedUserId}, 1, 0)) <!-- 로그인 사용자가 프로필 주인을 팔로우한다면 1, 아니면 0 -->
+            + MAX(IF(`following`.to_user_id = #{signedUserId}, 2, 0)) AS followState <!-- 프로필 주인이 로그인 사용자를 팔로우한다면 2, 아니면 0 -->
         FROM user u
         INNER JOIN feed f ON f.writer_user_id = u.user_id
         LEFT JOIN feed_like fl ON fl.feed_id = f.feed_id
+        LEFT JOIN user_follow follower ON follower.to_user_id = u.user_id <!-- 프로필 주인을 팔로우 하는 사람들 정보 -->
+        LEFT JOIN user_follow `following` ON `following`.from_user_id = u.user_id <!-- 프로필 주인이 팔로우 하는 사람들 정보 -->
         WHERE u.user_id = #{profileUserId};
     </select>
 </mapper>

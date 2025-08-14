@@ -1,14 +1,14 @@
 package com.greengram.entity;
 
 import jakarta.persistence.*;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 @Getter
-@Setter
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 @Entity
-@EqualsAndHashCode
+
 public class UserFollow extends CreatedAt {
   @EmbeddedId
   private UserFollowIds userFollowIds;

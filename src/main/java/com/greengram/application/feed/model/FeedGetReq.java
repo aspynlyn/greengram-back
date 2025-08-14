@@ -20,8 +20,12 @@ public class FeedGetReq {
   @Max(value = 100, message = "100이하")
   private Integer rowPerPage;
 
-  public FeedGetReq(Integer page, @BindParam("row_per_page") Integer rowPerPage) {
+  @Positive
+  private Long profileUserId;
+
+  public FeedGetReq(Integer page, @BindParam("row_per_page") Integer rowPerPage, @BindParam("profile_user_id") Long profileUserId) {
     this.page = page;
     this.rowPerPage = rowPerPage;
+    this.profileUserId = profileUserId;
   }
 }

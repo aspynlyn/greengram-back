@@ -57,8 +57,14 @@ public class UserController {
     log.info("profileUserId: {}", profileUserId);
     UserProfileGetDto dto = new UserProfileGetDto(userPrincipal.getSignedUserId(), profileUserId);
     UserProfileGetRes userProfileGetRes = userService.getProfileUser(dto);
+    log.info("userProfileGetRes: {}", userProfileGetRes);
     return new ResultResponse<>("유저 정보 프로필", userProfileGetRes);
   }
 
+  @PatchMapping("/profile/pic")
+  public ResultResponse<?> patchProfilePic(@AuthenticationPrincipal UserPrincipal userPrincipal, @RequestPart MultipartFile pic){
+    String saveFileName = userService.patchProfilePic(userPrincipal.getSignedUserId(), pic);
+    return new ResultResponse<>("프로필 유저 정보", saveFileName);
+  }
 
 }
