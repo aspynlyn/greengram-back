@@ -5,9 +5,11 @@ import com.greengram.application.feed.model.FeedGetRes;
 import com.greengram.application.feed.model.FeedPostReq;
 import com.greengram.application.feed.model.FeedPostRes;
 import com.greengram.application.feedcomment.FeedCommentMapper;
+import com.greengram.application.feedcomment.FeedCommentRepository;
 import com.greengram.application.feedcomment.model.FeedCommentGetReq;
 import com.greengram.application.feedcomment.model.FeedCommentGetRes;
 import com.greengram.application.feedcomment.model.FeedCommentItem;
+import com.greengram.application.feedlike.FeedLikeRepository;
 import com.greengram.config.constants.ConstComment;
 import com.greengram.config.util.ImgUploadManager;
 import com.greengram.entity.Feed;
@@ -15,8 +17,10 @@ import com.greengram.entity.User;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 
@@ -29,6 +33,8 @@ public class FeedService {
   private final FeedMapper feedMapper;
   private final FeedCommentMapper feedCommentMapper;
   private final ConstComment constComment;
+  private final FeedCommentRepository feedCommentRepository;
+  private final FeedLikeRepository feedLikeRepository;
   @Transactional
   public FeedPostRes postFeed(long signedUserId, FeedPostReq req, List<MultipartFile> pics) {
     User writerUser = new User();
@@ -66,5 +72,26 @@ public class FeedService {
       }
     }
     return list;
+  }
+
+  @Transactional
+  public void deleteFeed(long signedUserId, long feedId) {
+    Feed feed = feedRepository.findById(feedId)
+            .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "feed_id가 존재하지 않습니다."));
+    if(feed.getWriterUser().getUserId() != signedUserId) {
+      throw new ResponseStatusException(HttpStatus.FORBIDDEN, "피드 삭제 권한이 없습니다.");
+    }
+
+    //해당 피드 좋아요 삭제
+    feedLikeRepository.deleteByIdFeedId(feedId);
+
+    //해당 피드 댓글 삭제
+    feedCommentRepository.deleteByFeedFeedId(feedId);
+
+    //피드, 피드 사진 삭제
+    feedRepository.delete(feed);
+
+    //해당 피드 사진 폴더 삭제
+    imgUploadManager.removeFeedDirectory(feedId);
   }
 }

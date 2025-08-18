@@ -4,6 +4,7 @@ import com.greengram.application.feed.model.*;
 import com.greengram.config.model.ResultResponse;
 import com.greengram.config.model.UserPrincipal;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Positive;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -52,4 +53,13 @@ public class FeedController {
     return new ResultResponse<>(String.format("rows: %d", result.size()), result);
   }
   // modelattribute는 setter나 생성자가 있어야 데이터 들어감
+
+  @DeleteMapping
+  public ResultResponse<?> deleteFeed(@AuthenticationPrincipal UserPrincipal userPrincipal
+          ,@RequestParam("feed_id") @Valid @Positive long feedId) {
+    log.info("delete signedUserId: {}", userPrincipal.getSignedUserId());
+    log.info("delete feed_id: {}", feedId);
+    feedService.deleteFeed(userPrincipal.getSignedUserId(), feedId);
+    return new ResultResponse<>("피드가 삭제되었습니다", null);
+  }
 }

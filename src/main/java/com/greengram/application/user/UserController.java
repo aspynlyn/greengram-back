@@ -67,4 +67,9 @@ public class UserController {
     return new ResultResponse<>("프로필 유저 정보", saveFileName);
   }
 
+  @DeleteMapping("/profile/pic")
+  public ResultResponse<?> deleteProfilePic(@AuthenticationPrincipal UserPrincipal userPrincipal){
+    userService.deleteProfilePic(userPrincipal.getSignedUserId());
+    return new ResultResponse<>("프로필 사진 삭제", null);
+  }
 }
