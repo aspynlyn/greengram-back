@@ -35,6 +35,7 @@ public class UserPrincipal implements UserDetails, OAuth2User {
     public Long getSignedUserId() {
         return jwtUser.getSignedUserId();
     }
+
     @Override
     public String getPassword() { return null; }
 
@@ -42,12 +43,8 @@ public class UserPrincipal implements UserDetails, OAuth2User {
     public String getUsername() { return "oauth2"; }
 
     @Override
-    public String getName() {
-        return "oauth2";
-    }
+    public String getName() { return "oauth2"; }
 
     @Override
-    public Map<String, Object> getAttributes() {
-        return Map.of();
-    }
+    public Map<String, Object> getAttributes() { return Map.of(); }
 }

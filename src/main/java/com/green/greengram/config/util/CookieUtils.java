@@ -22,13 +22,23 @@ public class CookieUtils {
      */
     public void setCookie(HttpServletResponse response, String name, String value, int maxAge, String path) {
         Cookie cookie = new Cookie(name, value);
-        cookie.setPath(path);
+        if(path != null) {
+            cookie.setPath(path);
+        }
         cookie.setMaxAge(maxAge);
         cookie.setHttpOnly(true); //보안 쿠키 설정
         response.addCookie(cookie);
+//        ResponseCookie cookie = ResponseCookie.from(name, value)
+//                .path(path)
+//                //.sameSite("None") //secure가 true일때 동작한다.
+//                .httpOnly(true)
+//                .secure(false) //https일 때만 쿠키 전송된다.
+//                .maxAge(maxAge)
+//                .build();
+//
+//        response.addHeader("Set-Cookie", cookie.toString());
     }
 
-    // object(객체)타입의 value를 serializeObject메소드(직렬화 작업 메소드)를 사용해서 setCookie에 값 넣어주는 작업
     public void setCookie(HttpServletResponse res, String name, Object value, int maxAge, String path) {
         this.setCookie(res, name, serializeObject(value), maxAge, path);
     }

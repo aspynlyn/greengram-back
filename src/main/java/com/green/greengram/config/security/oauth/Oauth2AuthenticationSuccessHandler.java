@@ -30,7 +30,7 @@ public class Oauth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest req, HttpServletResponse res, Authentication auth)
-        throws IOException, ServletException {
+            throws IOException, ServletException {
         if(res.isCommitted()) { //응답 객체가 만료된 경우 (이전 프로세스에서 응답처리를 했는 상태)
             log.error("onAuthenticationSuccess called with a committed response {}", res);
             return;
@@ -52,22 +52,28 @@ public class Oauth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
         //쿼리스트링 생성을 위한 준비과정
         UserPrincipal myUserDetails = (UserPrincipal) auth.getPrincipal();
 
-        OAuth2JwtUser oAuth2JwtUser = (OAuth2JwtUser)myUserDetails.getJwtUser();
+        OAuth2JwtUser oauth2JwtUser = (OAuth2JwtUser)myUserDetails.getJwtUser();
 
-        JwtUser jwtUser = new JwtUser(oAuth2JwtUser.getSignedUserId(), oAuth2JwtUser.getRoles());
+        JwtUser jwtUser = new JwtUser(oauth2JwtUser.getSignedUserId(), oauth2JwtUser.getRoles());
 
-        //AT, RT 생성
-        String accessToken = jwtTokenManager.generateAccessToken(jwtUser);
-        String refreshToken = jwtTokenManager.generateRefreshToken(jwtUser);
-
-        cookieUtils.setCookie(res, constJwt.getRefreshTokenCookieName(), accessToken, constJwt.getAccessTokenCookieValiditySeconds(), constJwt.getAccessTokenCookiePath());
-
-        cookieUtils.setCookie(res, constJwt.getRefreshTokenCookieName(), refreshToken, constJwt.getRefreshTokenCookieValiditySeconds(), constJwt.getRefreshTokenCookiePath());
+        //AT, RT 생성 후 쿠키에 저장
+        jwtTokenManager.issue(res, jwtUser);
+//        String accessToken = jwtTokenManager.generateAccessToken(jwtUser);
+//        String refreshToken = jwtTokenManager.generateRefreshToken(jwtUser);
+//
+//        cookieUtils.setCookie(res, constJwt.getAccessTokenCookieName()
+//                                 , accessToken
+//                                 , constJwt.getAccessTokenCookieValiditySeconds()
+//                                 , constJwt.getAccessTokenCookiePath());
+//
+//        cookieUtils.setCookie(res, constJwt.getRefreshTokenCookieName()
+//                                 , refreshToken
+//                                 , constJwt.getRefreshTokenCookieValiditySeconds()
+//                                 , constJwt.getRefreshTokenCookiePath());
 
         /*
             쿼리스트링 생성
             targetUrl: /fe/redirect
-            accessToken: aaa
             userId: 20
             nickName: 홍길동
             pic: abc.jpg
@@ -75,9 +81,9 @@ public class Oauth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
             "fe/redirect?user_id=20&nick_name=홍길동&pic=abc.jpg"
          */
         return UriComponentsBuilder.fromUriString(targetUrl)
-                .queryParam("user_id", oAuth2JwtUser.getSignedUserId())
-                .queryParam("nick_name", oAuth2JwtUser.getNickName()).encode()
-                .queryParam("pic", oAuth2JwtUser.getPic())
+                .queryParam("user_id", oauth2JwtUser.getSignedUserId())
+                .queryParam("nick_name", oauth2JwtUser.getNickName()).encode()
+                .queryParam("pic", oauth2JwtUser.getPic())
                 .build()
                 .toUriString();
     }

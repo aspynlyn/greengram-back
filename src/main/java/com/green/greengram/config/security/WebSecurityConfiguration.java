@@ -47,8 +47,8 @@ public class WebSecurityConfiguration {
                 // 세션을 이용한 공격이다. 세션을 어차피 안 쓰니까 비활성화
                 .cors(corsConfigurer -> corsConfigurer.configurationSource(corsConfigurationSource())) // ⭐️⭐️⭐️
                 .authorizeHttpRequests(req -> req
-                        .requestMatchers(HttpMethod.POST,"/api/feed").hasAnyRole(EnumUserRole.USER_1.name())
-                        .requestMatchers( "/api/feed"
+                        .requestMatchers(HttpMethod.POST, "/api/feed").hasAnyRole(EnumUserRole.USER_1.name())
+                        .requestMatchers("/api/feed"
                                 , "/api/feed/like"
                                 , "/api/feed/comment"
                                 , "/api/user/follow"
@@ -56,15 +56,14 @@ public class WebSecurityConfiguration {
                                 , "/api/user/profile/pic").authenticated()
                         .anyRequest().permitAll()
                 )
-
                 .addFilterBefore(tokenAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
-                .oauth2Login(oauth2 -> oauth2.authorizationEndpoint(auth -> auth.baseUri(constOAuth2.baseUri)
-                        .authorizationRequestRepository(repository)
-                        )
-                        .redirectionEndpoint(redirection -> redirection.baseUri("/*/oauth2/code/*"))
-                        .userInfoEndpoint(userInfo -> userInfo.userService(myOauth2UserService))
-                        .successHandler(authenticationSuccessHandler)
-                        .failureHandler(authenticationFailureHandler)
+                .oauth2Login(oauth2 -> oauth2.authorizationEndpoint( auth -> auth.baseUri(constOAuth2.baseUri)
+                                        .authorizationRequestRepository(repository)
+                                )
+                                .redirectionEndpoint( redirection -> redirection.baseUri("/*/oauth2/code/*") )
+                                .userInfoEndpoint( userInfo -> userInfo.userService(myOauth2UserService) )
+                                .successHandler( authenticationSuccessHandler )
+                                .failureHandler( authenticationFailureHandler )
                 )
                 .addFilterBefore(new Oauth2AuthenticationCheckRedirectUriFilter(constOAuth2), OAuth2AuthorizationRequestRedirectFilter.class)
                 .exceptionHandling(e -> e.authenticationEntryPoint(tokenAuthenticationEntryPoint))
