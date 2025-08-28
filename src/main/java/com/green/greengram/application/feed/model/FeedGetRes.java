@@ -3,17 +3,19 @@ package com.green.greengram.application.feed.model;
 import com.green.greengram.application.feedcomment.model.FeedCommentGetRes;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 
 import java.util.List;
 
 @Getter
 @Setter
+@ToString
 public class FeedGetRes {
-  private long feedId;
+  private Long feedId;
   private String contents;
   private String location;
   private String createdAt;
-  private long writerUserId;
+  private Long writerUserId;
   private String writerUid;
   private String writerNickName;
   private String writerPic;
