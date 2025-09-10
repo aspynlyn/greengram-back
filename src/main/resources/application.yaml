@@ -40,7 +40,7 @@ constants:
     kakao:
       base-url: https://open-api.kakaopay.com/online/v1/payment
       data:
-        approval-url: http://localhost:5173/pay/approval
+        approval-url: http://localhost:5173/pay/approval #결제 승인 처리 화면
         authorization-name: Authorization
         cancel-url: http://localhost:5173/pay/cancel # 결제 취소 처리 화면
         cid: TC0ONETIME #테스트용 가맹점 코드

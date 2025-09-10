@@ -7,6 +7,7 @@ import com.green.greengram.config.model.JwtUser;
 import com.green.greengram.config.security.SignInProviderType;
 import com.green.greengram.config.util.ImgUploadManager;
 import com.green.greengram.entity.User;
+import com.green.greengram.entity.UserRole;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -22,7 +23,26 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.List;
+import java.util.function.Function;
 
+@FunctionalInterface
+interface MyInterface {
+  void sum();
+}
+
+class MyFunction implements Function<UserRole, EnumUserRole> {
+  @Override
+  public EnumUserRole apply(UserRole item) {
+    return item.getUserRoleIds().getRoleCode();
+  }
+}
+
+class MyFunction2 implements Function<String, Integer> {
+  @Override
+  public Integer apply(String item) {
+    return 1;
+  }
+}
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -68,6 +88,14 @@ public class UserService {
 //        }
 
     List<EnumUserRole> roles = user.getUserRoles().stream().map(item -> item.getUserRoleIds().getRoleCode()).toList();
+    List<EnumUserRole> roles2 = user.getUserRoles().stream().map(new Function<UserRole, EnumUserRole>(){
+      @Override
+      public EnumUserRole apply(UserRole item) {
+        return item.getUserRoleIds().getRoleCode();
+      }
+
+    }).toList();
+    List<EnumUserRole> roles3 = user.getUserRoles().stream().map(new MyFunction()).toList();
 
     log.info("roles: {}", roles);
     JwtUser jwtUser = new JwtUser(user.getUserId(), roles);
