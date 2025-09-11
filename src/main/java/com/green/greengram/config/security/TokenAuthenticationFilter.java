@@ -34,6 +34,7 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
 /*
 쿠키  >  세션  > JWT
 
+[user에서 처리]
 <로그인 과정>
 com.green.greengram.application.user.UserController
 (POST) /api/user/sign-in
@@ -45,6 +46,8 @@ com.green.greengram.application.user.UserController
 4. AT/RT 보안 쿠키에 담는다.
 5. 데이터B를 응답 처리
 
+
+[게이트웨이에서 처리]
 <요청마다 - 인증 과정>
 com.green.greengram.config.security.TokenAuthenticationFilter
 (필터는 모든 통신이 다 거쳐가는 곳이기 때문에 여기서 작업)
